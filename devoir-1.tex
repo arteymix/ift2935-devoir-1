@@ -1,0 +1,54 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+\usepackage{listings}
+
+\title{IFT2015 Base de données \\ Devoir 1}
+\author{Vincent Antaki \& Guillaume Poirier-Morency}
+
+\begin{document}
+
+  \maketitle
+
+  \abstract
+  Le devoir consiste à modéliser par diagramme Modèle-Entité-Relation deux cas
+  pratiques.
+
+  Afin d'exprimer explicitement nos contraintes d'intégrité, nous utilisons le
+  langage OCL.
+
+  \section{Numéro 1}
+
+  \subsection{}
+  Un individu ne peut pas être marié à lui-même.
+  \begin{lstlisting}[language=OCL]
+  context Mariage
+      inv: self.epoux <> self.epouse
+  \end{lstlisting}
+
+  \subsection{}
+  L'époux dans un mariage doit être un homme et l'épouse, une femme.
+  \begin{lstlisting}[language=OCL]
+  context Mariage
+      inv: self.epoux.sexe = "homme" and self.epouse.sexe = "femme"
+  \end{lstlisting}
+
+  \section{}
+
+  \subsection{}
+  Un artiste ne peut pas publier un oeuvre pour un courant auquel il ne
+  participe pas, mais il peut être associé à un courant même si aucune de ses
+  oeuvre n'y figure.
+  \begin{lstlisting}[language=OCL]
+  context Artiste
+      self.oeuvres->forAll(o : Oeuvre | self.courants->contains(o.courant))
+  \end{lstlisting}
+
+  Techniquement, les artistes doivent être préalablement associé à un courant
+  avant d'enregistrer une certaine de ses oeuvres pour ce courant.
+
+  \subsection{}
+\end{document}
