@@ -4,10 +4,15 @@
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
 
+\usepackage{adjustbox}
+\usepackage{fullpage}
+\usepackage{rotating}
+\usepackage{tikz}
+
 \usepackage{listings}
 
 \title{IFT2015 Base de données \\ Devoir 1}
-\author{Vincent Antaki \& Guillaume Poirier-Morency}
+\author{Vincent Antaki p1038646 \& Guillaume Poirier-Morency p1053380}
 
 \begin{document}
 
@@ -20,7 +25,21 @@
   Afin d'exprimer explicitement nos contraintes d'intégrité, nous utilisons le
   langage OCL.
 
-  \section{Numéro 1}
+  Les attributs qui peuvent prendre des valeurs multiples (ex. les prénoms d'un
+  individu pour l'arbre généalogique) sont notés par un double cercle.
+
+  \section{Arbre généalogique}
+
+  \begin{sidewaysfigure}
+  \begin{adjustbox}{max size={\textwidth}{\textheight}}
+  \input{figures/diagramme-numero-1}
+  \end{adjustbox}
+  \caption{Diagramme Modèle-entité-relation pour l'arbre généalogique.}
+  \end{sidewaysfigure}
+
+  La relation « est parent » définit la relation « est l'enfant » tout en
+  imposant la cardinalité de deux parents biologiques par enfant. Spécifier
+  uniquement la deuxième relation aurait nécéssité une contrainte d'intégrité.
 
   \subsection{}
   Un individu ne peut pas être marié à lui-même.
@@ -36,19 +55,35 @@
       inv: self.epoux.sexe = "homme" and self.epouse.sexe = "femme"
   \end{lstlisting}
 
-  \section{}
+  \section{Inventaire des oeuvres d'arts}
+
+  \begin{sidewaysfigure}
+  \begin{adjustbox}{max size={\textwidth}{\textheight}}
+  \input{figures/diagramme-numero-2}
+  \end{adjustbox}
+  \caption{Diagramme Modèle-entité-relation pour l'inventaire des oeuvres
+  d'arts.}
+  \end{sidewaysfigure}
 
   \subsection{}
-  Un artiste ne peut pas publier un oeuvre pour un courant auquel il ne
-  participe pas, mais il peut être associé à un courant même si aucune de ses
-  oeuvre n'y figure.
+  L'année d'une oeuvre doit être dans l'intervalle de naissance et de décès de
+  chaque les artistes qui y a participé.
+
   \begin{lstlisting}[language=OCL]
-  context Artiste
-      self.oeuvres->forAll(o : Oeuvre | self.courants->contains(o.courant))
+  context Oeuvre
+      inv: self.artistes->forAll(a1 : Artiste | 
+           a.date_de_naissance.year <= self.annee <= a.date_de_deces.year)
   \end{lstlisting}
 
-  Techniquement, les artistes doivent être préalablement associé à un courant
-  avant d'enregistrer une certaine de ses oeuvres pour ce courant.
-
   \subsection{}
+  Deux musées différents ne peuvent pas posséder le même exemplaire d'une oeuvre
+  d'art.
+
+  \begin{lstlisting}[language=OCL]
+  context Oeuvre
+      inv: self.exemplaires->forAll(e1 : Exemplaire, e2: Exemplaire | 
+           e1.numero_exemplaire = e2.numero_exemplaire 
+           implies e1.musee = e2.musee)
+  \end{lstlisting}
+
 \end{document}
